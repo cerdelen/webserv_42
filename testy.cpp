@@ -21,10 +21,7 @@ int main( int argc, char **argv )
 		if(servy.getConfigOutcome() == false)
 			return(-1);
 		// cout << servy.getConfig().getConfigMap().at("errorPage404") << endl;
-		while(true)
-		{
 			servy.request();
-		}
 	}
 	else if (argc == 2)
 	{

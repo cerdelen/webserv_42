@@ -10,6 +10,16 @@ void		server::request( void )
 	int		recvReturn;
 	char	receivingBuffer[MAX_LINE + 1];
 
+	//select stuff test
+	// {
+	// 	fd_set	fds, readfds;
+	// 	FD_ZERO (&fds);
+	// 	FD_SET(serverSocket, &fds);
+	// 	int fdmax = serverSocket;
+
+	// }
+	while (1)
+	{
 	cout << "Waiting for a connection on PORT: " << PORT_NBR << endl;
 	requestSocket = accept(serverSocket, (SA *) NULL, NULL);
 	failTest(requestSocket, "accept() Socket");
@@ -28,6 +38,7 @@ void		server::request( void )
 				"Closing the socket");
 	cout << "This is the full Request" << RESET_LINE;
 	cout << endl << fullRequest << RED << "<<here is the end>>" << RESET_LINE;
+	}
 }
 
 config	server::getConfig( void )
