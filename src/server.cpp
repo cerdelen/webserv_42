@@ -1,14 +1,14 @@
 #include "../includes/server.hpp"
 
+//Request-Line				= Method SP Request-URI SP HTTP-Version CRLF
+//CR = Carriage return		= \r
+//LF = Line Feed			= \n
+
 void		server::request( void )
 {
-	//Request-Line				= Method SP Request-URI SP HTTP-Version CRLF
-	//CR = Carriage return		= \r
-	//LF = Line Feed			= \n
 	int		requestSocket;
 	int		recvReturn;
 	char	receivingBuffer[MAX_LINE + 1];
-	char	sendingBuffer[MAX_LINE + 1] = "HTTP/1.1 200 OK\r\n\r\n<html>This is a welcoming message version 2!<h1>NOOO</h1></html>"; // example answer for request
 
 	cout << "Waiting for a connection on PORT: " << PORT_NBR << endl;
 	requestSocket = accept(serverSocket, (SA *) NULL, NULL);
@@ -24,8 +24,8 @@ void		server::request( void )
 		memset(receivingBuffer, 0, MAX_LINE);
 	}
 	handleRequest(requestSocket, fullRequest);
-	failTest(close(requestSocket),
-				"Sending answer to Request to requestSocket");
+	failTest(	close(requestSocket),
+				"Closing the socket");
 	cout << "This is the full Request" << RESET_LINE;
 	cout << endl << fullRequest << RED << "<<here is the end>>" << RESET_LINE;
 }
