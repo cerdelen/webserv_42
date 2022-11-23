@@ -30,7 +30,7 @@ void		server::request( void )
 	cout << endl << fullRequest << RED << "<<here is the end>>" << RESET_LINE;
 }
 
-config	server::getConfig( void )
+config	&server::getConfig( void )
 {
 	return (servConfig);
 }

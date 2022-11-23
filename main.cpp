@@ -20,6 +20,7 @@ int main( int argc, char **argv )
 
 		if(servy.getConfigOutcome() == false)
 			return(-1);
+		servy.getConfig().printMap();
 		while(true)
 		{
 			servy.request();

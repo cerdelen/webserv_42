@@ -12,8 +12,6 @@ config::config(): configOutcome(true)
 
 config::config(char *confPath): configOutcome(true)
 {
-	// std::string		confPathStr = confPath;
-
 	std::ifstream							confStream;
 	std::string								workingLine;
 	std::pair<std::string, std::string>		pair_;
@@ -28,6 +26,8 @@ config::config(char *confPath): configOutcome(true)
 		if(workingLine.size() == 0)
 			continue ;
 
+		if (workingLine.at(0) == '<')
+			continue ;
 		vec_ = split(workingLine, 9);
 		
 		// for (vec_it it = vec_.begin(); it != vec_.end(); it++)
@@ -36,11 +36,6 @@ config::config(char *confPath): configOutcome(true)
 		// }
 		
 
-		if (vec_[0].at(0) == '<')
-		{
-			vec_.clear();
-			continue ;
-		}
 		if (vec_.size() != 2)
 		{
 			cerr << RED << "This line in the config File is not according to our standards! Please fix!" << RESET_LINE << workingLine << endl;
