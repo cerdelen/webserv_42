@@ -37,7 +37,7 @@
 #define DIR				"dir"
 #define UPLOADDIR		"uploadDir"
 
-
+#define DEBUG 1
 
 
 
