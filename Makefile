@@ -1,4 +1,4 @@
-SRC = testy.cpp split.cpp src/config.cpp src/misc.cpp src/server.cpp
+SRC = main.cpp split.cpp src/config.cpp src/misc.cpp src/server.cpp
 EXEC_NAME = exec
 
 PINK    := \033[0;35m

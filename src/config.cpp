@@ -3,6 +3,7 @@
 #include <signal.h>
 
 #define vec_it std::vector<std::string>::iterator
+#define map_it std::map<std::string, std::string>::iterator
 
 config::config(): configOutcome(true)
 {
@@ -35,16 +36,16 @@ config::config(char *confPath): configOutcome(true)
 		// }
 		
 
+		if (vec_[0].at(0) == '<')
+		{
+			vec_.clear();
+			continue ;
+		}
 		if (vec_.size() != 2)
 		{
 			cerr << RED << "This line in the config File is not according to our standards! Please fix!" << RESET_LINE << workingLine << endl;
 			configOutcome = false;
 			return ;
-		}
-		if (vec_[0].at(0) == '<')
-		{
-			vec_.clear();
-			continue ;
 		}
 		configMap.insert(std::make_pair(vec_.at(0), vec_.at(1)));
 		vec_.clear();
@@ -53,7 +54,8 @@ config::config(char *confPath): configOutcome(true)
 
 config::~config()
 {
-	configMap.~map();
+	cerr << RED << "DECONST`rucCT" << RESET_LINE;
+	// configMap.~map();
 }
 
 confMapType&	config::getConfigMap( void )
@@ -83,4 +85,14 @@ void	config::initDefaultConfig( void )
 bool			config::getOutcome( void )
 {
 	return (configOutcome);
+}
+
+void			config::printMap( void )
+{
+	cout << "Printing Config Map" << endl;
+	for (map_it it = configMap.begin(); it != configMap.end(); it++)
+	{
+		cout << "\"" << it->first << ": " << it->second << "\"" << endl;
+	}
+	cout << "Done printing Config Map" << endl;
 }

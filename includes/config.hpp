@@ -17,6 +17,7 @@ class config
 		~config();
 		confMapType&	getConfigMap( void );
 		bool			getOutcome( void );
+		void			printMap( void );
 };
 
 #endif
