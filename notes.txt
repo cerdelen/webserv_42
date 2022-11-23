@@ -3,6 +3,8 @@ should s_request	&fillRequestStruct(std::string &fullRequest) return a reference
 need to figure out how to parse the body
 first figuring out how to test with curl
 does exit actually work in the class?
+initialise requestSocket address??
+
 
 https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/http_basics.html
 Content-Length: number-of-bytes - Used by POST request, to inform the server the length of the request body.
