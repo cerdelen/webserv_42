@@ -6,6 +6,9 @@
 
 void		server::request( void )
 {
+	if (DEBUG)
+		cout << PURPLE << "From: " << __func__ << RESET_LINE;
+
 	int		requestSocket;
 	int		recvReturn;
 	char	receivingBuffer[MAX_LINE + 1];
@@ -13,9 +16,9 @@ void		server::request( void )
 	//select stuff test
 
 	//how to do it for both sets?
-		fd_set	rfds, wfds, readyReadFDs, readyWriteFDs;
+		fd_set	rfds, /*wfds, */ readyReadFDs /*, readyWriteFDs*/;
 		FD_ZERO (&rfds);
-		FD_ZERO (&wfds);
+		// FD_ZERO (&wfds);
 		FD_SET(serverSocket, &rfds);
 		// FD_SET(serverSocket, &wfds);
 		int fdmax = serverSocket;
@@ -25,33 +28,47 @@ void		server::request( void )
 	while (1)
 	{
 		readyReadFDs = rfds;
-		readyWriteFDs = wfds;
-		availableFDs = select(fdmax + 1, &readyReadFDs, &readyWriteFDs, NULL, 0);
-		cout << RED << "Before check" << RESET_LINE;
-		if (FD_ISSET(serverSocket, &readyReadFDs))
+		failTest(select(fdmax + 1, &readyReadFDs, NULL, NULL, 0), "Select()");
+
+		for (int fd = 0; fd < fdmax + 1; fd++)
 		{
 			cout << "Waiting for a connection on PORT: " << PORT_NBR << endl;
-			requestSocket = accept(serverSocket, (SA *) NULL, NULL);
-			FD_SET(requestSocket, &rfds);
-			// FD_SET(requestSocket, &wfds);
-		}
-		failTest(requestSocket, "accept() Socket");
-		memset(receivingBuffer, 0, MAX_LINE + 1);	
-		fullRequest.clear();
-		while(((recvReturn = recv(requestSocket, receivingBuffer, MAX_LINE, 0)) > 0))
-		{
-			failTest(recvReturn, "Reading into receivingBuffer out of requestSocket");
-			fullRequest.append(receivingBuffer);
-			if (receivingBuffer[recvReturn - 1] == '\n' && receivingBuffer[recvReturn - 2] == '\r')
-				break;
-			memset(receivingBuffer, 0, MAX_LINE);
-		}
-		handleRequest(requestSocket, fullRequest);
-		failTest(	close(requestSocket),
-					"Closing the socket");
-		cout << "This is the full Request" << RESET_LINE;
+			if (FD_ISSET(fd, &readyReadFDs))
+			{
+				// cout << "File descriptor " << fd << " is set" << endl;
+				if (fd == serverSocket) //ready for a new connection
+				{
+					requestSocket = accept(serverSocket, (SA *) NULL, NULL); //do we want a struct for the receiving socket??
+					failTest(requestSocket, "accept() Socket");
+					FD_SET(requestSocket, &rfds);
+					//update maxsocket
+					if (requestSocket > fdmax)
+						fdmax = requestSocket;
+				}
+				else // data from an existing connection, receive it
+				{
+					memset(receivingBuffer, 0, MAX_LINE + 1);	
+					fullRequest.clear();
+					while(((recvReturn = recv(fd, receivingBuffer, MAX_LINE, 0)) > 0))
+					{
+						failTest(recvReturn, "Reading into receivingBuffer out of requestSocket");
+						fullRequest.append(receivingBuffer);
+						if (receivingBuffer[recvReturn - 1] == '\n' && receivingBuffer[recvReturn - 2] == '\r')
+							break;
+						memset(receivingBuffer, 0, MAX_LINE);
+					}
+
+					handleRequest(fd, fullRequest);
+					failTest(	close(fd),
+								"Closing the socket");
+					FD_CLR (fd, &rfds); //remove descriptor from set
+					cout << "This is the full Request" << RESET_LINE;
+					cout << endl << fullRequest << RED << "<<here is the end>>" << RESET_LINE;
+				}//fd ==
+			}//FD_ISSET
+		}//for
 		cout << endl << fullRequest << RED << "<<here is the end>>" << RESET_LINE;
-	}
+	}//while (1)
 }
 
 config	server::getConfig( void )
@@ -61,6 +78,9 @@ config	server::getConfig( void )
 
 void	server::sendResponse(int requestSocket, std::string &path)					// im writing this with a get request in mind
 {
+	if (DEBUG)
+		cout << PURPLE << "From: " << __func__ << RESET_LINE;
+
 	std::string		outie;
 
 	fillResponseStructBinary(path,requestSocket);
@@ -77,6 +97,9 @@ void	server::sendResponse(int requestSocket, std::string &path)					// im writin
 
 void server::fillResponseStructBinary(std::string &path, int request_soc)
 {
+	if (DEBUG)
+		cout << PURPLE << "From: " << __func__ << RESET_LINE;
+
 	long		bodyLength;
 	currResponse.httpVers = HTTPVERSION;
 	currResponse.statusMessage = "200 Everything is A-Ok";// still have to do
@@ -86,6 +109,9 @@ void server::fillResponseStructBinary(std::string &path, int request_soc)
 
 void	server::failTest( int check, std::string message )
 {
+	if (DEBUG)
+		cout << PURPLE << "From: " << __func__ << RESET_LINE;
+
 	if (check < 0)
 	{
 		cerr << RED << message << " < 0! Abort!" << RESET_LINE;
@@ -96,6 +122,9 @@ void	server::failTest( int check, std::string message )
 
 void	server::servAddressInit( void )
 {
+	if (DEBUG)
+		cout << PURPLE << "From: " << __func__ << RESET_LINE;
+
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);			// SOCK_STREAM == TCP
 
 	int	option = 1;
@@ -118,6 +147,9 @@ void	server::servAddressInit( void )
 
 void server::fillRequestLineItems(string &fullRequest)
 {
+	if (DEBUG)
+		cout << PURPLE << "From: " << __func__ << RESET_LINE;
+
 	//get request line
 	std::string	requestLine = fullRequest.substr(0, fullRequest.find('\n'));
 	std::vector<string> requestLineV = split(requestLine, ' ');
@@ -133,6 +165,9 @@ void server::fillRequestLineItems(string &fullRequest)
 
 void	server::fillRequestHeaders(string &fullRequest)
 {
+	if (DEBUG)
+		cout << PURPLE << "From: " << __func__ << RESET_LINE;
+
 	//get headers
 	int begin	= fullRequest.find('\n') + 1;
 	int size	= fullRequest.find("\r\n\r\n") - begin;
@@ -155,6 +190,8 @@ void	server::fillRequestHeaders(string &fullRequest)
 
 void server::fillRequestBody(std::string &fullRequest)
 {
+	if (DEBUG)
+		cout << PURPLE << "From: " << __func__ << RESET_LINE;
 	//get body
 	size_t	begin;
 	size_t	size;
@@ -173,6 +210,9 @@ void server::fillRequestBody(std::string &fullRequest)
 
 void	server::fillRequestStruct(std::string &fullRequest)
 {
+	if (DEBUG)
+		cout << PURPLE << "From: " << __func__ << RESET_LINE;
+
 	fillRequestLineItems(fullRequest);
 	fillRequestHeaders(fullRequest);
 	fillRequestBody(fullRequest);
@@ -201,9 +241,13 @@ int	server::checkRequestErrors(int requestSocket)
 
 void		server::handleRequest(int requestSocket, std::string &fullRequest)
 {
+	if (DEBUG)
+		cout << PURPLE << "From: " << __func__ << RESET_LINE;
+
 	fillRequestStruct(fullRequest);
 	// if (checkRequestErrors(requestSocket) != 0)
 		// return ;
+
 	if (currRequest.method.compare("GET") == 0)
 	{
 		// test for errors
@@ -236,6 +280,8 @@ void		server::handleRequest(int requestSocket, std::string &fullRequest)
 
 std::string		server::getBinary(std::string &path, long *size, int request_soc)
 {
+	if (DEBUG)
+		cout << PURPLE << "From: " << __func__ << RESET_LINE;
 
 	FILE	*file_stream;
 	std::string def_path("./database/default_index.html");
@@ -279,6 +325,9 @@ std::string		server::getBinary(std::string &path, long *size, int request_soc)
 
 std::string server::makeHeader(long bodySize, std::string &path) //prolly other stuff too
 {
+	if (DEBUG)
+		cout << PURPLE << "From: " << __func__ << RESET_LINE;
+		
 	std::string		out;
 	std::string extension;
 
