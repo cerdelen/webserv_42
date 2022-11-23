@@ -11,33 +11,46 @@ void		server::request( void )
 	char	receivingBuffer[MAX_LINE + 1];
 
 	//select stuff test
-	// {
-	// 	fd_set	fds, readfds;
-	// 	FD_ZERO (&fds);
-	// 	FD_SET(serverSocket, &fds);
-	// 	int fdmax = serverSocket;
 
-	// }
+	//how to do it for both sets?
+		fd_set	rfds, wfds, readyReadFDs, readyWriteFDs;
+		FD_ZERO (&rfds);
+		FD_ZERO (&wfds);
+		FD_SET(serverSocket, &rfds);
+		// FD_SET(serverSocket, &wfds);
+		int fdmax = serverSocket;
+		int availableFDs;
+
+	
 	while (1)
 	{
-	cout << "Waiting for a connection on PORT: " << PORT_NBR << endl;
-	requestSocket = accept(serverSocket, (SA *) NULL, NULL);
-	failTest(requestSocket, "accept() Socket");
-	memset(receivingBuffer, 0, MAX_LINE + 1);	
-	fullRequest.clear();
-	while(((recvReturn = recv(requestSocket, receivingBuffer, MAX_LINE, 0)) > 0))
-	{
-		failTest(recvReturn, "Reading into receivingBuffer out of requestSocket");
-		fullRequest.append(receivingBuffer);
-		if (receivingBuffer[recvReturn - 1] == '\n' && receivingBuffer[recvReturn - 2] == '\r')
-			break;
-		memset(receivingBuffer, 0, MAX_LINE);
-	}
-	handleRequest(requestSocket, fullRequest);
-	failTest(	close(requestSocket),
-				"Closing the socket");
-	cout << "This is the full Request" << RESET_LINE;
-	cout << endl << fullRequest << RED << "<<here is the end>>" << RESET_LINE;
+		readyReadFDs = rfds;
+		readyWriteFDs = wfds;
+		availableFDs = select(fdmax + 1, &readyReadFDs, &readyWriteFDs, NULL, 0);
+		cout << RED << "Before check" << RESET_LINE;
+		if (FD_ISSET(serverSocket, &readyReadFDs))
+		{
+			cout << "Waiting for a connection on PORT: " << PORT_NBR << endl;
+			requestSocket = accept(serverSocket, (SA *) NULL, NULL);
+			FD_SET(requestSocket, &rfds);
+			// FD_SET(requestSocket, &wfds);
+		}
+		failTest(requestSocket, "accept() Socket");
+		memset(receivingBuffer, 0, MAX_LINE + 1);	
+		fullRequest.clear();
+		while(((recvReturn = recv(requestSocket, receivingBuffer, MAX_LINE, 0)) > 0))
+		{
+			failTest(recvReturn, "Reading into receivingBuffer out of requestSocket");
+			fullRequest.append(receivingBuffer);
+			if (receivingBuffer[recvReturn - 1] == '\n' && receivingBuffer[recvReturn - 2] == '\r')
+				break;
+			memset(receivingBuffer, 0, MAX_LINE);
+		}
+		handleRequest(requestSocket, fullRequest);
+		failTest(	close(requestSocket),
+					"Closing the socket");
+		cout << "This is the full Request" << RESET_LINE;
+		cout << endl << fullRequest << RED << "<<here is the end>>" << RESET_LINE;
 	}
 }
 
