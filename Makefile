@@ -6,7 +6,7 @@ PURPLE    := \033[0;34m
 RESET    := \033[0m
 
 all:
-	c++ $(SRC) -o $(EXEC_NAME)
+	c++ $(SRC) -o $(EXEC_NAME) -g
 
 fclean:
 	rm $(EXEC_NAME)
