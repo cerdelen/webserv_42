@@ -18,6 +18,14 @@ class config
 		confMapType&	getConfigMap( void );
 		bool			getOutcome( void );
 		void			printMap( void );
+		std::string		getServName( void );
+		std::string		getHost( void );
+		std::string		getPort( void );
+		std::string		getClientMaxBody( void );
+		std::string		getRoot( void );
+		std::string		getDir( void );
+		std::string		getUploadDir( void );
+		std::string		getMethods( void );
 };
 
 #endif
