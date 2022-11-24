@@ -18,11 +18,12 @@ void		server::request( void )
 	while(((recvReturn = recv(requestSocket, receivingBuffer, MAX_LINE, 0)) > 0))
 	{
 		failTest(recvReturn, "Reading into receivingBuffer out of requestSocket");
-		fullRequest.append(receivingBuffer);
-		if (receivingBuffer[recvReturn - 1] == '\n' && receivingBuffer[recvReturn - 2] == '\r')
+		fullRequest.append(receivingBuffer, recvReturn);
+		if (recvReturn < MAX_LINE)
 			break;
 		memset(receivingBuffer, 0, MAX_LINE);
 	}
+	failTest(recvReturn, "recv() call to read from requestSocket");
 	handleRequest(requestSocket, fullRequest);
 	failTest(close(requestSocket),
 				"Sending answer to Request to requestSocket");
@@ -197,9 +198,10 @@ void		server::handle_post(int requestSocket, std::string &path, std::string &ful
 		{
 		}
 		extension = content_type.substr(i, content_type.length() - 1);
-		std::ofstream file("./uploads/" + file_name + "." + extension,  std::ios::out | std::ios::binary);
+		// std::ofstream file("./uploads/" + file_name + "." + extension,  std::ios::out | std::ios::binary);
+		std::ofstream file("./uploads/file.png",  std::ios::out | std::ios::binary);
 		file << currRequest.body;
-		write(requestSocket, "200 OK", 7);
+		write(requestSocket, "200 OK\r\n", 7);
 		file.close();
 		// std::cout << "tak tutaj mozesz wrzucac " << extension <<  std::endl;
 
