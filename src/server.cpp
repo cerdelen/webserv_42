@@ -58,7 +58,8 @@ void		server::request( void )
 						memset(receivingBuffer, 0, MAX_LINE);
 					}
 
-					handleRequest(fd, fullRequest);
+					if (fullRequest.length() > 1);  //idk why sometimes fullRequest is empty but it causes a segfault
+						handleRequest(fd, fullRequest);
 					failTest(	close(fd),
 								"Closing the socket");
 					FD_CLR (fd, &rfds); //remove descriptor from set
@@ -148,7 +149,10 @@ void	server::servAddressInit( void )
 void server::fillRequestLineItems(string &fullRequest)
 {
 	if (DEBUG)
+	{
 		cout << PURPLE << "From: " << __func__ << RESET_LINE;
+		cout << YELLOW << "Full Request: " << fullRequest << RESET_LINE;
+	}
 
 	//get request line
 	std::string	requestLine = fullRequest.substr(0, fullRequest.find('\n'));
