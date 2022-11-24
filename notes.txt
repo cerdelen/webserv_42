@@ -31,6 +31,8 @@ the server has to put up a Content-Type response header to inform the client the
 ____NGINX_CONFIGURATION_FILE
 https://www.youtube.com/watch?v=NEf3CFjN0Dg
 https://www.youtube.com/watch?v=C5kMgshNc6g
+http://nginx.org/en/docs/http/request_processing.html
+http://nginx.org/en/docs/http/server_names.html
 
 
 ___SPECS
