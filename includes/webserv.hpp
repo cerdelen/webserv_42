@@ -50,7 +50,7 @@ using std::string;
 using std::stringstream;
 using std::ifstream;
 
-#define PORT_NBR			3333
+#define PORT_NBR			3332
 #define MAX_LINE			4096
 #define SA					struct sockaddr
 #define SOCKET_BACKLOG		1024

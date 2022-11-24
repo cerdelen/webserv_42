@@ -1,6 +1,7 @@
 #ifndef server_HPP
 #define server_HPP
 #include "webserv.hpp"
+#include <fstream>
 #include "config.hpp"
 
 
@@ -120,6 +121,8 @@ class server
 		void			fillResponseStructBinary(std::string &path, int request_soc);
 		void			sendResponse(int requestSocket, std::string &path);			// im writing this with a get request in mind
 		void			fillInPossibleTypes();
+		void			handle_post(int requestSocket, std::string &path, std::string &fullRequest);
+		
 	public:
 		server(): servConfig()
 		{
