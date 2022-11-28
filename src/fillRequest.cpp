@@ -1,61 +1,61 @@
 #include "../includes/server.hpp"
 
-void	server::fillRequestStruct(std::vector<connecData*>::iterator	it)
+void	server::fillRequestStruct(std::string &fullRequest)
 {
-	fillRequestLineItems(it);
-	fillRequestHeaders(it);
-	fillRequestBody(it);
+	fillRequestLineItems(fullRequest);
+	fillRequestHeaders(fullRequest);
+	fillRequestBody(fullRequest);
 }
 
-void server::fillRequestLineItems(std::vector<connecData*>::iterator	it)
+void server::fillRequestLineItems(std::string &fullRequest)
 {
 
 	//get request line
-	std::string	requestLine = (*it)->request.raw.substr(0, (*it)->request.raw.find('\n'));
+	std::string	requestLine = fullRequest.substr(0, fullRequest.find('\n'));
 	std::vector<string> requestLineV = split(requestLine, ' ');
-	(*it)->request.method		= requestLineV[0];
-	(*it)->request.URI			= requestLineV[1];
-	(*it)->request.httpVers		= requestLineV[2];
+	currRequest.method		= requestLineV[0];
+	currRequest.URI			= requestLineV[1];
+	currRequest.httpVers		= requestLineV[2];
 
 	// print out request line
-	// cout << YELLOW << "method = " << (*it)->request.method << endl;
-	// cout << "URI = " << (*it)->request.URI << endl;
-	// cout << "httpVers = " << (*it)->request.httpVers << RESET_LINE;
+	cout << YELLOW << "method = " << currRequest.method << endl;
+	cout << "URI = " << currRequest.URI << endl;
+	cout << "httpVers = " << currRequest.httpVers << RESET_LINE;
 }
 
 
-void	server::fillRequestHeaders(std::vector<connecData*>::iterator	it)
+void	server::fillRequestHeaders(std::string &fullRequest)
 {
 	//get headers
-	int begin	= (*it)->request.raw.find('\n') + 1;
-	int size	= (*it)->request.raw.find("\r\n\r\n") - begin;
-	std::string	headers = (*it)->request.raw.substr(begin, size);
+	int begin	= fullRequest.find('\n') + 1;
+	int size	= fullRequest.find("\r\n\r\n") - begin;
+	std::string	headers = fullRequest.substr(begin, size);
 	std::vector<string> headersVector = split(headers, '\n');
 	std::vector<string> key_value;
 	size_t vectorSize = headersVector.size();
 	for (size_t i = 0; i < vectorSize; i++)
 	{
 		key_value = split(headersVector[i], ':', 1);
-		(*it)->request.headers.insert(std::make_pair(key_value[0], key_value[1]));
+		currRequest.headers.insert(std::make_pair(key_value[0], key_value[1]));
 	}
 	
 	// print headers to terminal
-	for (auto i : (*it)->request.headers)
+	for (auto i : currRequest.headers)
 	{
 		cout << RED << i.first << ": " << i.second << RESET_LINE;
 	}
 }
-void server::fillRequestBody(std::vector<connecData*>::iterator	it)
+void server::fillRequestBody(std::string &fullRequest)
 {
 	//get body
 	size_t	begin;
 	size_t	size;
-	if ((*it)->request.headers.end() != (*it)->request.headers.find("Content-Length")) // or 
+	if (currRequest.headers.end() != currRequest.headers.find("Content-Length")) // or 
 	{
-		begin		= (*it)->request.raw.find("\r\n\r\n") + 4;
-		size		= stoi((*it)->request.headers.at("Content-Length"));
-		std::string	body = (*it)->request.raw.substr(begin, size);			//still have to do (what if big body .. idea is to char* to data(+size of headers))
-		(*it)->request.body = body;
+		begin		= fullRequest.find("\r\n\r\n") + 4;
+		size		= stoi(currRequest.headers.at("Content-Length"));
+		std::string	body = fullRequest.substr(begin, size);			//still have to do (what if big body .. idea is to char* to data(+size of headers))
+		currRequest.body = body;
 	}
 	// else if ((*it)->request.headers.end() != (*it)->request.headers.find("Content-Length"))
 

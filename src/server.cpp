@@ -19,76 +19,76 @@ static void epoll_ctl_add(int epfd, int fd, uint32_t events)
 	}
 }
 
-// void		server::requestLoop( void )
-// {
-// 	int		idx;
-// 	int		requestSocket;
-// 	int		recvReturn;
-// 	char	receivingBuffer[MAX_LINE + 1];
+void		server::requestLoop( void )
+{
+	int		idx;
+	int		requestSocket;
+	int		recvReturn;
+	char	receivingBuffer[MAX_LINE + 1];
 	
 	
-// 	int epollFD = epoll_create1(0);
-// 	failTest(epollFD, "epoll_create1");
+	// int epollFD = epoll_create1(0);
+	// failTest(epollFD, "epoll_create1");
 
-// 	struct epoll_event events[MAX_EVENTS]; //should be a define
-// 	epoll_ctl_add(epollFD, serverSocket, EPOLLIN | EPOLLOUT | EPOLLET);
+	// struct epoll_event events[MAX_EVENTS]; //should be a define
+	// epoll_ctl_add(epollFD, serverSocket, EPOLLIN | EPOLLOUT | EPOLLET);
 
-// 	int nfds;
-// 	while(true)
-// 	{
-// 		nfds = epoll_wait(epollFD, events, MAX_EVENTS, -1); //-1 blocks forever, 0 never blocks in both examples they use -1? 
-// 		// cout << YELLOW << "Number of fds ready: " << nfds << RESET_LINE;
-// 		for (idx = 0; idx < nfds; idx++)
-// 		{
-// 			// cout << RED << "IDX: " << idx << RESET_LINE;
-//  			if (events[idx].data.fd == serverSocket) //ready to accept a new connection
-// 			{
-// 				cout << "Waiting for a connection on PORT: " << PORT_NBR << endl;
-// 				requestSocket = accept(serverSocket, (SA *) NULL, NULL);
-// 				failTest(requestSocket, "accept() Socket");
-// 				epoll_ctl_add(epollFD, requestSocket, EPOLLIN | EPOLLET | EPOLLRDHUP | EPOLLHUP);
-// 			}
-// 			else if(events[idx].events & EPOLLIN) /* handle EPOLLIN event */
-// 			{
-// 				// cout << RED << "ELSE IF" << RESET_LINE;
-// 				memset(receivingBuffer, 0, MAX_LINE + 1);	
-// 				fullRequest.clear();
-// 				while(((recvReturn = recv(events[idx].data.fd , receivingBuffer, MAX_LINE, 0)) > 0))
-// 				// while(((recvReturn = recv(requestSocket , receivingBuffer, MAX_LINE, 0)) > 0))
-// 				{
-// 					fullRequest.append(receivingBuffer, recvReturn);
-// 					if (recvReturn < MAX_LINE)
-// 					{
-// 						memset(receivingBuffer, 0, MAX_LINE);
-// 						break;
-// 					}
-// 					memset(receivingBuffer, 0, MAX_LINE);
-// 					cout << PURPLE << "Inside else if: " << recvReturn << RESET_LINE;
-// 				}
-// 				failTest(recvReturn, "recv() call to read from requestSocket");
-// 				handleRequest(events[idx].data.fd , fullRequest);
-// 				// handleRequest(requestSocket, fullRequest);
-// 				// failTest(close(events[idx].data.fd ), "Sending answer to Request to requestSocket");
-// 				// epoll_ctl(epollFD, EPOLL_CTL_DEL, events[idx].data.fd, NULL);
-// 				failTest(close(requestSocket), "Sending answer to Request to requestSocket");
-// 			}
+	// int nfds;
+	while(true)
+	{
+		// nfds = epoll_wait(epollFD, events, MAX_EVENTS, -1); //-1 blocks forever, 0 never blocks in both examples they use -1? 
+		// cout << YELLOW << "Number of fds ready: " << nfds << RESET_LINE;
+		// for (idx = 0; idx < nfds; idx++)
+		{
+			// cout << RED << "IDX: " << idx << RESET_LINE;
+ 			// if (events[idx].data.fd == serverSocket) //ready to accept a new connection
+			{
+				cout << "Waiting for a connection on PORT: " << PORT_NBR << endl;
+				requestSocket = accept(serverSocket, (SA *) NULL, NULL);
+				failTest(requestSocket, "accept() Socket");
+				// epoll_ctl_add(epollFD, requestSocket, EPOLLIN | EPOLLET | EPOLLRDHUP | EPOLLHUP);
+			}
+			// else if(events[idx].events & EPOLLIN) /* handle EPOLLIN event */
+			{
+				// cout << RED << "ELSE IF" << RESET_LINE;
+				memset(receivingBuffer, 0, MAX_LINE + 1);	
+				fullRequest.clear();
+				// while(((recvReturn = recv(events[idx].data.fd , receivingBuffer, MAX_LINE, 0)) > 0))
+				while(((recvReturn = recv(requestSocket , receivingBuffer, MAX_LINE, 0)) > 0))
+				{
+					fullRequest.append(receivingBuffer, recvReturn);
+					if (recvReturn < MAX_LINE)
+					{
+						memset(receivingBuffer, 0, MAX_LINE);
+						break;
+					}
+					memset(receivingBuffer, 0, MAX_LINE);
+					cout << PURPLE << "Inside else if: " << recvReturn << RESET_LINE;
+				}
+				failTest(recvReturn, "recv() call to read from requestSocket");
+				// handleRequest(events[idx].data.fd , fullRequest);
+				handleRequest(requestSocket, fullRequest);
+				// failTest(close(events[idx].data.fd ), "Sending answer to Request to requestSocket");
+				// epoll_ctl(epollFD, EPOLL_CTL_DEL, events[idx].data.fd, NULL);
+				failTest(close(requestSocket), "Sending answer to Request to requestSocket");
+			}
 
-// 			/* check if the connection is closing */
-// 			// if (events[idx].events & (EPOLLRDHUP | EPOLLHUP))
-// 			// {
-// 			// 	printf("[+] connection closed\n");
-// 			// 	epoll_ctl(epollFD, EPOLL_CTL_DEL, events[idx].data.fd, NULL);
-// 			// 	close(events[idx].data.fd);
-// 			// 	continue;
-// 			// }
+			/* check if the connection is closing */
+			// if (events[idx].events & (EPOLLRDHUP | EPOLLHUP))
+			// {
+			// 	printf("[+] connection closed\n");
+			// 	epoll_ctl(epollFD, EPOLL_CTL_DEL, events[idx].data.fd, NULL);
+			// 	close(events[idx].data.fd);
+			// 	continue;
+			// }
 
 
-// 		//printing the request
-// 		cout << "This is the full Request" << RESET_LINE;
-// 		// cout << endl << fullRequest << RED << "<<here is the end>>" << RESET_LINE;
-// 		}
-// 	}
-// }
+		//printing the request
+		cout << "This is the full Request" << RESET_LINE;
+		// cout << endl << fullRequest << RED << "<<here is the end>>" << RESET_LINE;
+		}
+	}
+}
 
 void	server::sendResponse(int requestSocket, std::string &path)					// im writing this with a get request in mind
 {
@@ -159,6 +159,7 @@ void server::fillResponseStructBinary(std::string &path, int request_soc)
 	currResponse.httpVers = HTTPVERSION;
 	currResponse.statusMessage = "200 Everything is A-Ok";// still have to do
 	currResponse.body = getBinary(path, &bodyLength, request_soc);
+	cout << YELLOW << "filleResponseStructBInary: " << path << RESET_LINE;
 	currResponse.headers = makeHeader(bodyLength, path); // still have to do
 }
 
@@ -207,15 +208,60 @@ void		server::handle_post(int requestSocket, std::string &path, std::string &ful
 	}
 }
 
+#include <stdlib.h> //for putenv
+ #include <sys/wait.h> //for wait
+void		server::checkURI(int requestSocket)
+{
+	string CGIPath = "/cgi-bin/put_photo_in_cat.py?intra_login=";
+	int equalStatus = currRequest.URI.compare(0, CGIPath.length(), CGIPath);
+
+	if (equalStatus == 0)
+	{
+		string intraName = split(currRequest.URI, '=')[1];
+		cout << GREEN << intraName << RESET_LINE;
+		string envVariable = "INTRA_NAME=" + intraName;
+		putenv((char *)envVariable.c_str());
+		cout<< RED << getenv("INTRA_NAME") << RESET_LINE;
+		pid_t pid = fork();
+		failTest(pid, "forking for cgi");
+		if (pid == 0)
+		{
+			// string path = "/workspaces/webserv_42/cgi-bin/" + intraName + ".html";
+
+			// std::ofstream file("./cgi-bin/cerdelen.html");
+			// file.open(path,std::ios_base::out);
+			// if (file.is_open())
+				// cout << RED << "OPEN" << RESET_LINE;
+			// else
+				// cout <<RED << path << RESET_LINE;
+			// file.close();
+			char **env;
+			env = (char **)calloc(2, sizeof(char *));
+			env[0] = strdup(("INTRA_NAME=" + intraName).c_str());
+			int err = execve("./cgi-bin/put_photo_in_cat.py", NULL, env);
+			perror("CGI");
+			cout << RED  << strerror(errno) << RESET_LINE;
+			exit(-69);
+		}
+		wait(NULL);
+		string path = "/cgi-bin/" + intraName + ".html";
+		currRequest.URI = path;
+		
+	}
+	cout << PURPLE << currRequest.URI.compare(0, CGIPath.length(), CGIPath) << RESET_LINE;
+}
+
 void		server::handleRequest(int requestSocket, std::string &fullRequest)
 {
-	// fillRequestStruct(fullRequest);
+	fillRequestStruct(fullRequest);
 	// if (checkRequestErrors(requestSocket) != 0)
 		// return ;
 	if (currRequest.method.compare("GET") == 0)
 	{
 		// test for errors
 		// send response
+		checkURI(requestSocket);
+		cout << YELLOW << currRequest.URI << RESET_LINE;
 		sendResponse(requestSocket, currRequest.URI);
 		cout << "its a get request :)" << endl;
 	}
@@ -234,6 +280,7 @@ void		server::handleRequest(int requestSocket, std::string &fullRequest)
 	}
 	else
 	{
+		cout << RED << currRequest.method << RESET_LINE;
 		cout << "We should throw an error code with a message that we do not support this method" << endl;
 	}
 	currRequest.headers.clear();
@@ -261,11 +308,14 @@ std::string		server::getBinary(std::string &path, long *size, int request_soc)
 	}
 	else{
 		//If there is a different file user wants to open
+		cout << YELLOW << "From getBInary: " << path << RESET_LINE;
 		file_stream = fopen(("."+path).c_str(), "rb");
 	}
 	if(file_stream == nullptr)
 	{
 		//For errors
+		cout << RED << "COULDN'T OPEN" << RESET_LINE;
+		perror("open: ");
 		file_stream = fopen(err_path.c_str(), "rb");
 		path = "/database/Error_404.png";
 	}
@@ -304,6 +354,7 @@ std::string server::makeHeader(long bodySize, std::string &path) //prolly other 
 	}else{
 		extension.append(path.substr(i, path.length() - i));
 	}
+	cout << YELLOW << path << RESET_LINE;
 	std::cout << "extension thingy " << extension << std::endl; 
 	// out.append(path);
 	out = "Content-Type: " + extension + " ; Content-Transfer-Encoding: binary; Content-Length: " + std::to_string(bodySize) + ";charset=ISO-8859-4 ";

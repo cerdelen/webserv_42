@@ -126,10 +126,10 @@ class server
 
 		void			failTest( int check, std::string message );
 		void			servAddressInit( void );
-		void			fillRequestLineItems(std::vector<connecData*>::iterator	it);
-		void			fillRequestHeaders(std::vector<connecData*>::iterator	it);
-		void			fillRequestBody(std::vector<connecData*>::iterator	it);
-		void			fillRequestStruct(std::vector<connecData*>::iterator it);
+		void			fillRequestLineItems(std::string &);
+		void			fillRequestHeaders(std::string &);
+		void			fillRequestBody(std::string &);
+		void			fillRequestStruct(std::string &);
 		int				checkGetRequest(int requestSocket);
 		int				checkRequestErrors(int requestSocket);
 		void			handleRequest(int requestSocket, std::string &fullRequest);
@@ -149,6 +149,7 @@ class server
 		void			confusedEpoll( struct epoll_event ev );
 		void			parseRequest( struct epoll_event ev );
 		
+		void			checkURI(int requestSocket);
 		// void			removeFromEpoll( struct epoll_event ev );
 		
 
