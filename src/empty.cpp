@@ -78,9 +78,12 @@ bool	server::parseRequest( struct epoll_event ev )
 
 void	server::endRequest( struct epoll_event ev, std::vector<connecData*>::iterator it )
 {
-	epoll_ctl(epollFD, EPOLL_CTL_DEL, ev.data.fd, &ev);
 	if (parseRequest(ev) == false)
+	{
+		endResponse(ev);
 		return ;
+	}
+	epoll_ctl(epollFD, EPOLL_CTL_DEL, ev.data.fd, &ev);
 	ev = createEpollStruct((*it)->socket, EPOLLOUT);
 	epoll_ctl(epollFD, EPOLL_CTL_ADD, ev.data.fd, &ev);
 	(*it)->finishedRequest = true;
@@ -362,8 +365,9 @@ void	server::	endResponse( struct epoll_event ev )
 {
 	std::vector<connecData*>::iterator	it = findStructVectorIt(ev);
 
-	cout << PURPLE << (*it)->response.body_fd << RESET_LINE;
-	close((*it)->response.body_fd);		// fd to body of response
+	cout << PURPLE << "closing fd in endResponse() " << (*it)->response.body_fd << RESET_LINE;
+	if ((*it)->response.body_fd > 2)
+		close((*it)->response.body_fd);		// fd to body of response
 	delete (*it);
 	connections.erase(it);
 	epoll_ctl(epollFD, EPOLL_CTL_DEL, ev.data.fd, &ev);
@@ -509,10 +513,10 @@ void		server::requestLoop( void )
 				cout << RED << "Why did we get here. FD: " << events[idx].data.fd << RESET_LINE;
 			}
 			// cout << "currConnections: " << connections.size() << endl;
-			for (size_t i = 0; i < connections.size(); i++)
-			{
-				// cout << "ind: " << i << " socket: " << connections[i]->socket << endl;
-			}
+			// for (size_t i = 0; i < connections.size(); i++)
+			// {
+			// 	cout << "ind: " << i << " socket: " << connections[i]->socket << endl;
+			// }
 		}
 	}
 }
