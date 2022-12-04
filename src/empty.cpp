@@ -51,8 +51,12 @@ bool	server::validateRequest( struct epoll_event ev )
 		stopInvaldiRequest(ev);
 		return (false);
 	}
-	if ((*it)->request.httpVers.compare((std::string)HTTPVERSION) != 0)
+
+	if ((*it)->request.httpVers.compare(HTTPVERSION) != 0)
 	{
+		std::string tmp("test");
+		cout << "string length: " << (*it)->request.httpVers.size() << " last one is " << (int)(((*it)->request.httpVers.c_str())[8]) << endl;
+		cout << (*it)->request.httpVers <<  "	TEST" << "\n" <<  "||||||||||" << endl << HTTPVERSION << "||"<< endl;
 		cout << RED << "Request rejected because of Invalid HTTP Version: " << (*it)->request.httpVers << RESET_LINE;
 		stopInvaldiRequest(ev);
 		return (false);
