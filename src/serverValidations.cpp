@@ -34,7 +34,7 @@ bool	Server::validateRequest( struct epoll_event ev )
 	{
 		cout << PURPLE << itt->first << ": " << itt->second << RESET_LINE;
 	}
-	if (servConfig.allowedMETHOD((*it)->request.method) == false)
+	if (getConfig((*it)->request.hostname).allowedMETHOD((*it)->request.method) == false)
 	{
 		cerr << RED << "Request rejected because of Invalid Method: " << (*it)->request.method << RESET_LINE;
 		// setErrorStatusCodeAndRespond(it, "405");
@@ -45,14 +45,14 @@ bool	Server::validateRequest( struct epoll_event ev )
 	// cout << "this is before expansion" << (*it)->request.URI << endl;
 	if((*it)->request.URI == "/")
 	{
-		if (servConfig.getDirectoryListing().compare("yes") == 0)
+		if (getConfig((*it)->request.hostname).getDirectoryListing().compare("yes") == 0)
 			(*it)->request.URI = DIR_LISTING_SCRIPT;
 		else
 			(*it)->request.URI = DEFAULTPAGE;
 		cout << "got into if" << endl;
 	}
 	// cout << "this is after expansion" << (*it)->request.URI << endl;
-	if (servConfig.allowedURI((*it)->request.URI, (*it)->request.method) == false)
+	if (getConfig((*it)->request.hostname).allowedURI((*it)->request.URI, (*it)->request.method) == false)
 	{
 		cerr << RED << "Request rejected because of Invalid URI: " << (*it)->request.URI << RESET_LINE;
 		setErrorStatusCodeAndRespond(ev, it, "403");
@@ -68,7 +68,7 @@ bool	Server::validateRequest( struct epoll_event ev )
 	}
 	try
 	{
-		if (ft_atoi((*it)->request.headers.at("Content-Length").c_str()) > servConfig.getClientMaxBody())
+		if (ft_atoi((*it)->request.headers.at("Content-Length").c_str()) > getConfig((*it)->request.hostname).getClientMaxBody())
 		{
 			cout << RED << "Request rejected because of CONTENT-LENGTH IS TOO BIG: " << ft_atoi((*it)->request.headers.at("Content-Length").c_str()) << RESET_LINE;
 			setErrorStatusCodeAndRespond(ev, it, "413");
@@ -83,7 +83,7 @@ bool	Server::validateRequest( struct epoll_event ev )
 	try
 	{
 		cout << "hieeeeloo" << (*it)->request.headers.at("content-length") << endl;
-		if (ft_atoi((*it)->request.headers.at("content-length").c_str()) > servConfig.getClientMaxBody())
+		if (ft_atoi((*it)->request.headers.at("content-length").c_str()) > getConfig((*it)->request.hostname).getClientMaxBody())
 		{
 			cout << RED << "Request rejected because of CONTENT-LENGTH IS TOO BIG: " << ft_atoi((*it)->request.headers.at("content-length").c_str()) << RESET_LINE;
 			setErrorStatusCodeAndRespond(ev, it, "413");

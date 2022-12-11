@@ -273,10 +273,10 @@ config	&Server::getConfig( std::string hostName)
 }
 
 
-bool	Server::getConfigOutcome( void )
-{
-	cout << PINK << __func__ << RESET_LINE;
-	// return(servConfig.getOutcome());
-	return true;
-}
+// bool	Server::getConfigOutcome( void )
+// {
+// 	cout << PINK << __func__ << RESET_LINE;
+// 	// return(servConfig.getOutcome());
+// 	return true;
+// }
 

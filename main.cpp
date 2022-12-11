@@ -20,16 +20,11 @@ int main( int argc, char **argv )
 	// {
 		Server			servy(argv[1]);
 
-		config lel	=	servy.getConfig("hostname");
-		cout << RED << lel.getDir() << RESET_LINE;
-
-		// if(servy.getConfigOutcome() == false)
-		// 	return(-1);
 		// servy.getConfig().printMap();
-		// while(true)
-		// {
-		// 	servy.requestLoop();
-		// }
+		while(true)
+		{
+			servy.requestLoop();
+		}
 	// }
 	// else if (argc > 2)
 	// {
@@ -38,3 +33,17 @@ int main( int argc, char **argv )
 	// }
 }
 
+
+
+
+
+
+// config lel	=	servy.getConfig("default");
+// 		cout << RED << lel.getServName() << RESET_LINE;
+// 		config ced = servy.getConfig("cedric");
+// 		cout << RED << ced.getServName() << RESET_LINE;
+// 		config kwis = servy.getConfig("kwisi");
+// 		cout << RED << kwis.getServName() << RESET_LINE;
+
+// 		config jak = servy.getConfig("jakub");
+// 		cout << RED << jak.getServName() << RESET_LINE;

@@ -149,8 +149,8 @@ class Server
 			// if(servConfig.getOutcome() == false)
 			// {
 				// servConfig.~config();
-				cout << "returning " << endl;
-				return ;
+				// cout << "returning " << endl;
+				// return ;
 			// }
 			fillInPossibleTypes();
 			servAddressInit();

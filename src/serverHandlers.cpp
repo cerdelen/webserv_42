@@ -23,7 +23,7 @@ void	Server::handleCGI(struct epoll_event	ev, std::vector<connecData*>::iterator
 
 	(*it)->isCGI = true;
 	cout << YELLOW << "URI is: " << (*it)->request.URI << RESET_LINE;
-	objectCGI.setEnvironment(it, servConfig);
+	objectCGI.setEnvironment(it, getConfig((*it)->request.hostname));
 	std::string sktStr =  ft_itoa((*it)->socket);
 	(*it)->fileNameCGI = DEFAULT_CGI_FILE_PATH + sktStr + "_fileCGI.html";
 	
@@ -107,7 +107,7 @@ void	Server::handleGet(std::vector<connecData*>::iterator it, struct epoll_event
 	else if ((*it)->request.URI.compare("/") == 0)
 	{
 		//if list directory is enabled return this page
-		if (servConfig.getDirectoryListing().compare("yes") == 0 )
+		if (getConfig((*it)->request.hostname).getDirectoryListing().compare("yes") == 0 )
 		{
 			(*it)->request.URI = DIR_LISTING_SCRIPT;
 			handleCGI(ev, it);
