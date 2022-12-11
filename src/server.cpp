@@ -261,13 +261,15 @@ void Server::fillScriptsCGI(void)
 
 config	&Server::getConfig( std::string hostName)
 {
-	cout << PINK << __func__ << RESET_LINE;
+	cout << PINK << __func__ << " with hostname of \""  << hostName << RESET_LINE;
+	cout << hostName << " " << hostName.size()  << " " << (int)hostName[0] << endl;
 	try
 	{
 		return(servConfig.at(hostName));
 	}
 	catch(const std::exception& e)
 	{
+		cout << RED << "get config exeption so i didnt find the hostname in map" << RESET_LINE;
 		return(servConfig["default"]);
 	}
 }

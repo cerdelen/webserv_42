@@ -52,6 +52,7 @@ bool	Server::validateRequest( struct epoll_event ev )
 		cout << "got into if" << endl;
 	}
 	// cout << "this is after expansion" << (*it)->request.URI << endl;
+	cout << " im giving hostname " << (*it)->request.hostname  << " and receiving config of " << getConfig((*it)->request.hostname).getServName() << endl;
 	if (getConfig((*it)->request.hostname).allowedURI((*it)->request.URI, (*it)->request.method) == false)
 	{
 		cerr << RED << "Request rejected because of Invalid URI: " << (*it)->request.URI << RESET_LINE;

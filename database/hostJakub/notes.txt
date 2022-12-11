@@ -1,0 +1,64 @@
+Are we allowed to use 'using'
+should s_request	&fillRequestStruct(std::string &fullRequest) return a reference?? how does it work
+need to figure out how to parse the body
+first figuring out how to test with curl
+does exit actually work in the class?
+
+https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/http_basics.html
+Content-Length: number-of-bytes - Used by POST request, to inform the server the length of the request body.
+Content-Type: mime-type - Used by POST request, to inform the server the media type of the request body.
+
+/////////////// Subject - Set a default file to answer if the request is a directory
+Suppose that a directory called "testdir" is present in the document base directory "htdocs".
+If a client issues a GET request to "/testdir/" (i.e., at the directory).
+
+    The server will return "/testdir/index.html" if the directory contains a "index.html" file.
+    Otherwise, the server returns the directory listing, if directory listing is enabled in the server configuration.
+    Otherwise, the server returns "404 Page Not Found".
+///////////////
+
+
+////
+The server uses a MIME configuration file (called "conf\mime.types") to map the file extension to a media type,
+so that it can ascertain the media type of the file by looking at its file extension.
+For example, file extensions ".htm", ".html" are associated with MIME media type "text/html",
+file extension of ".jpg", ".jpeg" are associated with "image/jpeg". When a file is returned to the client,
+the server has to put up a Content-Type response header to inform the client the media type of the data.
+///
+
+____NGINX_CONFIGURATION_FILE
+https://www.youtube.com/watch?v=NEf3CFjN0Dg
+https://www.youtube.com/watch?v=C5kMgshNc6g
+
+
+___SPECS
+Request Line - https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.1
+
+
+//
+No whitespace is allowed between the header field-name and colon.  In
+   the past, differences in the handling of such whitespace have led to
+   security vulnerabilities in request routing and response handling.  A
+   server MUST reject any received request message that contains
+   whitespace between a header field-name and colon with a response code
+   of 400 (Bad Request).
+//
+
+{ maybe just on mine system
+	127.0.0.1:3332/database/ - Errno message : Bad address
+segfault when trying to submit an image through the form
+only loaded localhost:3332 and it segfaulted
+}
+
+
+
+CGI stuffs:
+The Query_String and Method Get
+The query string is the simplest method of passing form data to a script.
+If you append a question mark (?) to the url of your script,
+then any characters after the question mark will be passed
+to your script in the environment variable called QUERY_STRING. 
+
+CHECK FOR MORE THAN ONE ? IN QUERY STRING
+
+Pass things as reference whenever possible

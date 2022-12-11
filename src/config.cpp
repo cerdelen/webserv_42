@@ -39,6 +39,7 @@ config::config(std::string configBlock): configOutcome(true)
 			exit(-1);
 		}
 		// configMap.insert(std::make_pair(tmp, vec_.at(1))); // doesnt work if key already exists
+		cout << "adding \"" << tmp << "\" with value \"" << vec_.at(1) << "\"" << endl;
 		configMap[tmp] = vec_.at(1);
 		if (tmp.compare("serverName") == 0)
 			cout << vec_.at(1);
@@ -370,7 +371,7 @@ bool			config::allowedURI( std::string URI, std::string method )
 
 	if (method.compare("GET") == 0)
 	{
-		// cout << configMap[DIR] << " " << URI.substr(0, configMap[DIR].size())<< endl;
+		cout << configMap[DIR] << " " << URI.substr(0, configMap[DIR].size())<< endl;
 
 		if (DEBUG)
 			cout << "comparing paths in get" << endl;
