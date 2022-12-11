@@ -72,6 +72,14 @@ void	Server::fillRequestHeaders(std::vector<connecData*>::iterator	it)
 		// cout << "adding " << key_value[0] << " size " << key_value.size() << " val |" << key_value[1] << "|" << endl;
 		(*it)->request.headers.insert(std::make_pair(key_value[0], key_value[1]));
 	}
+	try
+	{
+		(*it)->request.hostname = (*it)->request.headers.at(HOSTNAMEHEAD);
+	}
+	catch(const std::exception& e)
+	{
+		(*it)->request.hostname = "default";
+	}
 	
 	// print headers to terminal
 	// for (auto i : (*it)->request.headers)

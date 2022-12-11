@@ -15,7 +15,7 @@ PINK    := \033[0;35m
 PURPLE    := \033[0;34m
 RESET    := \033[0m
 
-CFLAGS = -Wall -Wextra -Werror -std=c++98
+# CFLAGS = -Wall -Wextra -Werror -std=c++98
 OBJ  := $(SRC:.cpp =.o)
 
 # %.o: %.c 

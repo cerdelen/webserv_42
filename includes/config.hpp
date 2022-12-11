@@ -26,6 +26,7 @@ class config
 	public:
 		config();
 		config(char *confPath);
+		config(std::string configBlock);
 		~config();
 		confMapType&	getConfigMap( void );
 		bool			getOutcome( void );

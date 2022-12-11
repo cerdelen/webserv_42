@@ -37,6 +37,7 @@
 #define CGIDIR			"CGIDIR"
 #define UPLOADDIR		"uploadDir"
 #define DIR_LISTING		"directoryListing"
+#define HOSTNAMEHEAD	"Host"
 
 #define DIRERRORPATH    "/database/default_index_.html"
 #define DEFAULTPAGE     "/database/default_index.html"

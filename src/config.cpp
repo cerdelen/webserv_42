@@ -11,21 +11,20 @@ config::config(): configOutcome(true)
 	initDefaultConfig();
 }
 
-config::config(char *confPath): configOutcome(true)
+config::config(std::string configBlock): configOutcome(true)
 {
-	std::ifstream							confStream;
-	std::string								workingLine;
+	std::vector<std::string>				inputLines = split(configBlock, '\n');
 	std::pair<std::string, std::string>		pair_;
 	std::vector<std::string>				vec_;
 	std::string								tmp;
+	std::vector<std::string>::iterator		lineIt = inputLines.begin();
+	std::vector<std::string>::iterator		lineIt_e = inputLines.end();
 
-	initDefaultConfig();
-	confStream.open(confPath);
-	while(std::getline(confStream, workingLine, '\n'))
+	for(;lineIt != lineIt_e;lineIt++)
 	{
-		if(workingLine.size() == 0)
+		if((*lineIt).size() == 0)
 			continue ;
-		vec_ = split(workingLine, 9);
+		vec_ = split((*lineIt), 9);// this is a tab
 		if (vec_.at(0).at(0) == '<')
 		{
 			vec_.clear();
@@ -34,25 +33,63 @@ config::config(char *confPath): configOutcome(true)
 		tmp = vec_.at(0);
 		if(tmp.at(tmp.size() - 1) == ':')
 			tmp.erase(tmp.size() - 1);
-		// cout << "after test : " << tmp.at(tmp.size() - 1) << endl;
-
-		// for (vec_it it = vec_.begin(); it != vec_.end(); it++)
-		// {
-		// 	cout << "\"" << *it << "\"" << endl;
-		// }
-
 		if (vec_.size() != 2)
 		{
-			cerr << RED << "This line in the config File is not according to our standards! Please fix!" << RESET_LINE << workingLine << endl;
+			cerr << RED << "This line in the config File is not according to our standards! Please fix!" << RESET_LINE << (*lineIt) << endl;
 			exit(-1);
 		}
 		// configMap.insert(std::make_pair(tmp, vec_.at(1))); // doesnt work if key already exists
 		configMap[tmp] = vec_.at(1);
+		if (tmp.compare("serverName") == 0)
+			cout << vec_.at(1);
 		tmp.clear();
 		vec_.clear();
 	}
 	validateConfig();
 }
+
+// config::config(char *confPath): configOutcome(true)
+// {
+// 	std::ifstream							confStream;
+// 	std::string								workingLine;
+// 	std::pair<std::string, std::string>		pair_;
+// 	std::vector<std::string>				vec_;
+// 	std::string								tmp;
+
+// 	initDefaultConfig();
+// 	confStream.open(confPath);
+// 	while(std::getline(confStream, workingLine, '\n'))
+// 	{
+// 		if(workingLine.size() == 0)
+// 			continue ;
+// 		vec_ = split(workingLine, 9);
+// 		if (vec_.at(0).at(0) == '<')
+// 		{
+// 			vec_.clear();
+// 			continue ;
+// 		}
+// 		tmp = vec_.at(0);
+// 		if(tmp.at(tmp.size() - 1) == ':')
+// 			tmp.erase(tmp.size() - 1);
+// 		// cout << "after test : " << tmp.at(tmp.size() - 1) << endl;
+
+// 		// for (vec_it it = vec_.begin(); it != vec_.end(); it++)
+// 		// {
+// 		// 	cout << "\"" << *it << "\"" << endl;
+// 		// }
+
+// 		if (vec_.size() != 2)
+// 		{
+// 			cerr << RED << "This line in the config File is not according to our standards! Please fix!" << RESET_LINE << workingLine << endl;
+// 			exit(-1);
+// 		}
+// 		// configMap.insert(std::make_pair(tmp, vec_.at(1))); // doesnt work if key already exists
+// 		configMap[tmp] = vec_.at(1);
+// 		tmp.clear();
+// 		vec_.clear();
+// 	}
+// 	validateConfig();
+// }
 
 config::~config()
 {

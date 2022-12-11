@@ -9,10 +9,14 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+typedef std::map<std::string, std::vector<std::string> >		postDeleteMap;
+typedef std::map<std::string, std::string>					hostDirs;
+
 
 typedef struct t_request
 {
 	std::string								raw;
+	std::string								hostname;
 	std::string								method;
 	std::string								URI;
 	std::string								httpVers;
@@ -62,6 +66,7 @@ class Server
 		std::vector<connecData*>		connections;
 		int								epollFD;
 
+
 		// do we need this shit?
 		struct sockaddr_in	serverAddress;
 		int					sizeOfServerAddress;
@@ -75,7 +80,7 @@ class Server
 		std::map<std::string, std::string>	possibleTypes;
 		std::map<std::string, std::string>	possibleReturnCode;
 		std::map<std::string, std::string>	possibleCGIPaths;
-		config								servConfig;
+		std::map<std::string, config>		servConfig;
 		CGI									objectCGI;
 		std::vector<std::string>			scriptsCGI;
 
@@ -114,38 +119,39 @@ class Server
 		void			confusedEpoll( struct epoll_event ev );
 		void			prepareResponseHeader( std::vector<connecData*>::iterator it, struct epoll_event	ev );
 		void			createAndSendResponseHeaders(struct epoll_event	ev, std::vector<connecData*>::iterator it);
-		void			handle_cgi(std::vector<connecData *>::iterator it);
 		bool			validateRequest( struct epoll_event ev );
 		void			URIisDirectory(s_request &req);
 		void			setErrorStatusCodeAndRespond(struct epoll_event	ev, std::vector<connecData*>::iterator it, std::string err);
-
-
+		//config			getConfig(std::string)// if string is emtpy it returns the default one otherwhise it searches the whole vector and returns the found one if no hostname found the default one };
+		void			readconfigFile(char * confPath);
 
 
 
 	public:
-		Server(): servConfig()
-		{
-			sizeOfServerAddress = sizeof(serverAddress);
-			if(servConfig.getOutcome() == false)
-			{
-				// servConfig.~config();
-				return ;
-			}
+		// Server(): servConfig()
+		// {
+		// 	sizeOfServerAddress = sizeof(serverAddress);
+		// 	servConfig.push_back(config());
+		// 	if(servConfig[0].getOutcome() == false)
+		// 	{
+		// 		// servConfig.~config();
+		// 		return ;
+		// 	}
 			
-			fillInPossibleTypes();
-			servAddressInit();
-			// currConnections = 0;
-		};
-		Server(char * confPath): servConfig(confPath)
+		// 	fillInPossibleTypes();
+		// 	servAddressInit();
+		// 	// currConnections = 0;
+		// };
+		Server(char * confPath)
 		{
+			readconfigFile(confPath);
 			sizeOfServerAddress = sizeof(serverAddress);
-			if(servConfig.getOutcome() == false)
-			{
+			// if(servConfig.getOutcome() == false)
+			// {
 				// servConfig.~config();
 				cout << "returning " << endl;
 				return ;
-			}
+			// }
 			fillInPossibleTypes();
 			servAddressInit();
 			// currConnections = 0;
@@ -157,7 +163,8 @@ class Server
 		};
 
 
-		config		&getConfig( void );
+
+		config		&getConfig( std::string hostName);
 		bool		getConfigOutcome( void );
 		void		requestLoop( void );
 };

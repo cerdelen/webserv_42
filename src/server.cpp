@@ -29,21 +29,53 @@ void	Server::acceptConnection( int epollFD )
 	epoll_ctl(epollFD, EPOLL_CTL_ADD, ev.data.fd, &ev);
 }
 
+void	Server::readconfigFile(char * confPath)
+{
+	std::ifstream							confStream;
+	std::string								appendedString;
+	std::string								workingLine;
+	std::pair<std::string, std::string>		pair_;
+	std::vector<std::string>				vec_;
+	std::string								tmp;
+
+	cout << confPath << endl;
+	confStream.open(confPath);
+	if(confStream.is_open())
+		cout << "is open" << endl;
+	cout << "readconfigFile before whole "<< endl;
+	while(std::getline(confStream, workingLine, '\n'))
+	{
+		// cout << "in while " << workingLine << endl;	
+		if(workingLine.size() == 0)
+			continue ;
+		if (workingLine.compare("</server>") == 0)
+		{
+			cout << "following is full appended string" << endl;
+			cout << appendedString << endl;
+			cout << "end of full appended string" << endl;
+			config tmp(appendedString);
+			servConfig.insert(std::make_pair(tmp.getServName(), tmp));
+			appendedString.erase();
+		}
+		appendedString.append(workingLine + "\n");
+	}
+}
+
 void	Server::servAddressInit( void )
 {
 	cout << PINK << __func__ << RESET_LINE;
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);			// SOCK_STREAM == TCP
 
 	int	option = 1;
-	
+
 	setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &option, sizeof(option));
 
 	serverAddress.sin_family		= AF_INET;							// means IPv4 / AD_INET6 =IPv6 
 	// serverAddress.sin_port			= htons(PORT_NBR);					// Used port
-	serverAddress.sin_port			= htons(ft_atoi(servConfig.getPort().c_str()));					// Used port
+	serverAddress.sin_port			= htons(ft_atoi(getConfig("default").getPort().c_str()));					// Used port
 	// serverAddress.sin_addr.s_addr	= htonl(INADDR_LOOPBACK);			// Address this socket is litening to
 	// serverAddress.sin_addr.s_addr	= htonl((unsigned int)ft_atoi(servConfig.getHost().c_str()));			// Address this socket is litening to
-	serverAddress.sin_addr.s_addr	= inet_addr(servConfig.getHost().c_str());			// Address this socket is litening to
+	serverAddress.sin_addr.s_addr	= inet_addr(getConfig("default").getHost().c_str());			// Address this socket is litening to
 
 	cout << INADDR_LOOPBACK << endl;
 
@@ -227,16 +259,24 @@ void Server::fillScriptsCGI(void)
 	scriptsCGI.insert(scriptsCGI.end(), "/cgi-bin/directory_listing.sh");
 }
 
-config	&Server::getConfig( void )
+config	&Server::getConfig( std::string hostName)
 {
 	cout << PINK << __func__ << RESET_LINE;
-	return (servConfig);
+	try
+	{
+		return(servConfig.at(hostName));
+	}
+	catch(const std::exception& e)
+	{
+		return(servConfig["default"]);
+	}
 }
 
 
 bool	Server::getConfigOutcome( void )
 {
 	cout << PINK << __func__ << RESET_LINE;
-	return(servConfig.getOutcome());
+	// return(servConfig.getOutcome());
+	return true;
 }
 
