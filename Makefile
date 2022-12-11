@@ -23,7 +23,6 @@ OBJ  := $(SRC:.cpp =.o)
 
 all: $(EXEC_NAME)
 
-
 $(EXEC_NAME): $(OBJ)
 	c++ $(CFLAGS) $(OBJ) -o $(EXEC_NAME) -D DEBUG=0
 
@@ -38,6 +37,10 @@ run: all
 run_debug:
 	c++ $(SRC) -o $(EXEC_NAME) -D DEBUG=1
 	./exec config_files/test.conf
+
+test:
+	c++ main.cpp src/server.cpp src/config.cpp src/misc.cpp 
+	./a.out config_files/test.conf 
 
 git:
 	git add .gitignore

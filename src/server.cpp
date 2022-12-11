@@ -59,6 +59,11 @@ void	Server::readconfigFile(char * confPath)
 		}
 		appendedString.append(workingLine + "\n");
 	}
+	// if (error)
+	// {
+
+	// 	exit(1);
+	// }
 }
 
 void	Server::servAddressInit( void )
@@ -273,10 +278,10 @@ config	&Server::getConfig( std::string hostName)
 }
 
 
-bool	Server::getConfigOutcome( void )
-{
-	cout << PINK << __func__ << RESET_LINE;
-	// return(servConfig.getOutcome());
-	return true;
-}
+// bool	Server::getConfigOutcome( void )
+// {
+// 	cout << PINK << __func__ << RESET_LINE;
+// 	// return(servConfig.getOutcome());
+// 	return true;
+// }
 

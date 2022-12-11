@@ -98,8 +98,8 @@ void CGI::setEnvironment(std::vector<connecData*>::iterator it, config servConfi
 		
 	}
 	env["SCRIPT_NAME"] = split((*it)->request.URI, '?')[0]; //The virtual path (e.g., /cgi-bin/program.pl) of the script being executed.
-	env["SERVER_NAME"] = servConfig.getServName();
-	env["SERVER_PORT"] = servConfig.getPort();
+	env["SERVER_NAME"] = getConfig((*it)->request.hostname).getServName();
+	env["SERVER_PORT"] = getConfig((*it)->request.hostname).getPort();
 	env["SERVER_PROTOCOL"] = HTTPVERSION;
 }
 
