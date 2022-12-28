@@ -5,19 +5,12 @@ void	Server::handleCGI(struct epoll_event	ev, std::vector<connecData*>::iterator
 {
 	cout << SKY << __func__ << ": isCGI!" << RESET_LINE;
 
-	//check if path to script is legit maybe?
 	if (checkCGIPaths(it) == false)
 	{
-		// (*it)->request.URI = "/database/Error_404.png";
-		// (*it)->response.status_code = "404";
-
 		cout << RED << "WRONG CGI PATH" << RESET_LINE;
-		// handleGet(it);
 		if ((*it)->response.status_code.compare("500") != 0)
 			(*it)->response.status_code = "404";
 		setErrorStatusCodeAndRespond(ev, it, (*it)->response.status_code);
-		// createAndSendResponseHeaders(ev ,it, "404");
-		// endConnection();
 		return ;
 	}
 
@@ -60,12 +53,8 @@ void 	Server::handlePost( std::vector<connecData*>::iterator it, struct epoll_ev
 {
 	cout << SKY << __func__ << RESET_LINE;
 	std::string extension = getExtensionFromRequestPost(it);
-	// if(extension.empty())
-	// 	endConnection(ev);
-
 	(*it)->response.content_type = extension;
 	createAndSendResponseHeaders(ev, it);
-	// if((*it)->request.URI.
 }
 
 void	Server::handleDelete(std::vector<connecData*>::iterator it, struct epoll_event	ev)
@@ -75,7 +64,6 @@ void	Server::handleDelete(std::vector<connecData*>::iterator it, struct epoll_ev
 	std::cout << "Chuj " << (*it)->request.URI << std::endl;
 	if((*it)->request.URI.compare(0, 8,"/uploads") == 0)
 	{
-		//Root path for welcome page
 		std::string ret = ".";
 		ret.append((*it)->request.URI);
 		if(remove(ret.c_str()) != 0)
@@ -89,8 +77,6 @@ void	Server::handleDelete(std::vector<connecData*>::iterator it, struct epoll_ev
 		std::cout << "Cannot delete from different directiory than uploads" << std::endl;
 		(*it)->response.status_code = "417";
 	}
-	// (*it)->response.content_type = extension;
-	// (*it)->response.content_lenght_str = conv.str();
 	createAndSendResponseHeaders(ev, it);
 }
 
@@ -118,7 +104,6 @@ void	Server::handleGet(std::vector<connecData*>::iterator it, struct epoll_event
 		(*it)->request.file_two  = fopen(DEFAULT_PATH , "rb");
 	}
 	else if ((*it)->request.URI.compare("/favicon.ico") == 0)
-	// else if ((*it)->request.URI.compare("./favicon.ico") == 0)
 	{
 		//Favicon for now streamlined
 		(*it)->request.file_one  = fopen(FAV_ICON_PATH, "rb");
@@ -149,19 +134,13 @@ void	Server::handleGet(std::vector<connecData*>::iterator it, struct epoll_event
 	(*it)->response.content_lenght = ftell((*it)->request.file_one);
 	rewind((*it)->request.file_one );
 	std::string binaryString;
-	// this line is creating problems with small files
 	std::string extension = getExtensionFromRequestGet(it);
 	std::stringstream conv;
 	conv << (*it)->response.content_lenght;
-	// std::cout << RED << "Extension: " << extension << std::endl;
-	// std::cout << "Reponse Content-Lenght == " << (*it)->response.content_lenght << std::endl;
-	//Those values are sent in the header as a response
 	(*it)->response.content_type = extension;
 	(*it)->response.content_lenght_str = conv.str();
 	createAndSendResponseHeaders(ev, it);
 	(*it)->response.body_fd = fileno((*it)->request.file_two);
-
-	// std::cout << (*it)->response.headers << std::endl;
 	rewind((*it)->request.file_one);
 	fclose((*it)->request.file_one);
 }
